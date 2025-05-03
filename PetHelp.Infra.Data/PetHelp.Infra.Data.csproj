@@ -7,10 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="EntityConfiguration\" />
     <Folder Include="Migrations\" />
-    <Folder Include="Repositories\" />
-    <Folder Include="Persistence\" />
   </ItemGroup>
 
   <ItemGroup>

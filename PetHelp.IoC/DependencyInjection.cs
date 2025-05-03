@@ -11,6 +11,7 @@ using PetHelp.Domain.Account;
 using PetHelp.Domain.Interfaces.Services;
 using PetHelp.Infra.Data.Context;
 using PetHelp.Infra.Data.Identity;
+using PetHelp.Infra.Data.Persistence;
 using PetHelp.Infra.Data.Services;
 
 namespace PetHelp.IoC;
@@ -34,9 +35,8 @@ public static class DependencyInjection
         services.AddScoped<IAuthenticate, AuthenticateService>();
         services.AddScoped<ISeedUserRoleInitial, SeedUserRoleInitial>();
         services.AddScoped<ITokenService, TokenService>();
-
         //Register Unit Of Work 
-
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         //services.AddAutoMapper(typeof(DTOToCommandMappingProfile).Assembly);
         //var myHandles = AppDomain.CurrentDomain.Load("BarberFlow.Application");
