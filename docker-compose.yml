@@ -8,6 +8,9 @@ services:
       dockerfile: PetHelp.API/Dockerfile
     depends_on:
       - db
+    ports:
+      - "8080:8080"  # Mapeando a porta 8080 do container para a porta 8080 do host
+      - "8081:8081"
 
   db:
     image: postgres:15
