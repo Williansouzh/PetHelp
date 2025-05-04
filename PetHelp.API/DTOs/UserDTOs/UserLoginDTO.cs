@@ -4,6 +4,8 @@ namespace PetHelp.API.DTOs.UserDTOs;
 
 public class UserLoginDTO
 {
+    public String Role { get; set; }
+    public Guid Id { get; set; }
     [Required(ErrorMessage = "Email is required")]
     [EmailAddress(ErrorMessage = "Invalid Email Address")]
     [StringLength(100, ErrorMessage = "Email length can't be more than 100.")]

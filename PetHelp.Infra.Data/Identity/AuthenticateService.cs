@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using PetHelp.Domain.Account;
@@ -10,31 +11,20 @@ public class AuthenticateService : IAuthenticate
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     ILogger<AuthenticateService> _logger;
     public AuthenticateService(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         RoleManager<IdentityRole> roleManager,
-        ILogger<AuthenticateService> logger)
+        ILogger<AuthenticateService> logger,
+        IHttpContextAccessor httpContextAccessor)
     {
         _roleManager = roleManager;
         _userManager = userManager;
         _signInManager = signInManager;
         _logger = logger;
-    }
-    public async Task<bool> Authenticate(string email, string password)
-    {
-        _logger.LogInformation("Tentando autenticar o usuário: {Email}", email);
-        var user = await _userManager.FindByEmailAsync(email);
-        if(user == null)
-        {
-            Console.WriteLine($"[ERRO] Usuário não encontrado: {email}");
-            return false;
-        }
-        var result = await _signInManager.CheckPasswordSignInAsync(user, password, false);
-        _logger.LogError("Usuário não encontrado: {Email}", email);
-        return result.Succeeded;
-
+        _httpContextAccessor = httpContextAccessor;
     }
     public async Task<bool> RegisterUser(string email, string password, string role, string name, string lastName, string phone)
     {
@@ -45,42 +35,75 @@ public class AuthenticateService : IAuthenticate
             Name = name,
             LastName = lastName,
             Phone = phone,
-            Role = role
         };
 
         var result = await _userManager.CreateAsync(applicationUser, password);
         if (!result.Succeeded)
         {
-            foreach(var error in result.Errors)
+            foreach (var error in result.Errors)
             {
-                Console.WriteLine($"[ERRO] Falha ao criar usuário: {error.Description}");
+                _logger.LogError("Falha ao criar usuário: {ErrorDescription}", error.Description);
             }
             return false;
         }
+
         var user = await _userManager.FindByEmailAsync(email);
-        if (user == null)
-        {
-            Console.WriteLine($"[ERRO] Usuário não encontrado no banco, após criação.");
-            return false;
-        }
         var roleExists = await _roleManager.RoleExistsAsync(role);
         if (!roleExists)
         {
             _logger.LogError("A role '{Role}' não existe.", role);
             return false;
         }
+
         var roleResult = await _userManager.AddToRoleAsync(user, role);
-        if(!roleResult.Succeeded)
+        return roleResult.Succeeded;
+    }
+    public async Task<AuthUser?> Authenticate(string email, string password)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null) return null;
+
+        var result = await _signInManager.CheckPasswordSignInAsync(
+            user,
+            password,
+            lockoutOnFailure: true);
+
+        if (!result.Succeeded) return null;
+
+        var roles = await _userManager.GetRolesAsync(user);
+        _logger.LogInformation("Login attempt for {Email} from {IP}", email, _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress);
+        return new AuthUser
         {
-            foreach (var error in roleResult.Errors)
-            {
-                Console.WriteLine($"[ERRO] Falha ao adicionar usuário à role: {error.Description}");
-            }
-            return false;
+            Id = user.Id,
+            Email = user.Email,
+            Name = user.Name,
+            LastName = user.LastName,
+            Phone = user.Phone,
+            Roles = await _userManager.GetRolesAsync(user)
+        };
+    }
+
+    public async Task<ApplicationUser?> RegisterUser(string email, string password, string role)
+    {
+        var applicationUser = new ApplicationUser
+        {
+            UserName = email,
+            Email = email
+        };
+
+        var result = await _userManager.CreateAsync(applicationUser, password);
+        if (!result.Succeeded) return null;
+
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null) return null;
+
+        if (!await _roleManager.RoleExistsAsync(role))
+        {
+            await _roleManager.CreateAsync(new IdentityRole(role));
         }
-        await _signInManager.SignInAsync(user, isPersistent: false);
-        Console.WriteLine("[SUCESSO] Usuário registrado e autenticado.");
-        return true;
+
+        var roleResult = await _userManager.AddToRoleAsync(user, role);
+        return roleResult.Succeeded ? user : null;
     }
     public async Task Logout()
     {
@@ -119,5 +142,30 @@ public class AuthenticateService : IAuthenticate
         var storedRefreshToken = claims.FirstOrDefault(c => c.Type == "refreshToken")?.Value;
 
         return storedRefreshToken == refreshToken;
+    }
+    public async Task<AuthUser?> GetCurrentUser()
+    {
+        var principal = _httpContextAccessor.HttpContext?.User;
+        if (principal == null) return null;
+
+        var user = await _userManager.GetUserAsync(principal);
+        if (user == null) return null;
+
+        var roles = await _userManager.GetRolesAsync(user);
+
+        return new AuthUser
+        {
+            Id = user.Id,
+            Email = user.Email,
+            Name = user.Name,
+            LastName = user.LastName,
+            Phone = user.Phone,
+            Roles = roles
+        };
+    }
+    public async Task<bool> IsUserLoggedIn()
+    {
+        var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+        return user != null;
     }
 }

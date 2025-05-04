@@ -3,15 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PetHelp.Application.Interfaces;
+using PetHelp.Application.Mappings;
+using PetHelp.Application.Services;
 using PetHelp.Domain.Account;
+using PetHelp.Domain.Interfaces.Repositories;
 using PetHelp.Domain.Interfaces.Services;
 using PetHelp.Infra.Data.Context;
 using PetHelp.Infra.Data.Identity;
 using PetHelp.Infra.Data.Persistence;
+using PetHelp.Infra.Data.Repositories;
 using PetHelp.Infra.Data.Services;
 
 namespace PetHelp.IoC;
@@ -32,15 +38,17 @@ public static class DependencyInjection
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
         //Register repositories 
+        services.AddScoped<IAnimalRepository, AnimalRepository>();
+        services.AddScoped<IAnimalService, AnimalService>();
         services.AddScoped<IAuthenticate, AuthenticateService>();
         services.AddScoped<ISeedUserRoleInitial, SeedUserRoleInitial>();
         services.AddScoped<ITokenService, TokenService>();
         //Register Unit Of Work 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-        //services.AddAutoMapper(typeof(DTOToCommandMappingProfile).Assembly);
-        //var myHandles = AppDomain.CurrentDomain.Load("BarberFlow.Application");
-        //services.AddMediatR(myHandles);
+        services.AddAutoMapper(typeof(DTOToCommandMappingProfile).Assembly);
+        var myHandles = AppDomain.CurrentDomain.Load("PetHelp.Application");
+        services.AddMediatR(myHandles);
         return services;
     }
 }

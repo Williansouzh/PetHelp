@@ -1,21 +1,22 @@
-﻿using System.Security.Claims;
-
-namespace PetHelp.Domain.Interfaces.Services;
+﻿using PetHelp.Domain.Account;
 
 public interface ITokenService
 {
-    string GenerateAccessToken(string email);
+    // Token Generation
+    string GenerateToken(AuthUser user);
     string GenerateRefreshToken();
+    Task<string> GenerateAndStoreRefreshToken(string email);
 
-    bool ValidateAccessToken(string token);
-    bool ValidateRefreshToken(string token);
+    // Token Validation
+    bool ValidateToken(string token);
+    Task<bool> ValidateRefreshToken(string email, string refreshToken);
 
-    ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
+    // Token Claims
     string GetEmailFromToken(string token);
+    string GetUserIdFromToken(string token);
+    string GetRoleFromToken(string token);
 
-    string GenerateEmailConfirmationToken(string email);
-    string GeneratePasswordResetToken(string email);
-
-    int GetAccessTokenExpirationMinutes();
-    int GetRefreshTokenExpirationDays();
+    // Token Management
+    Task<bool> UpdateRefreshToken(string email, string newRefreshToken);
+    Task<bool> RevokeRefreshToken(string email);
 }

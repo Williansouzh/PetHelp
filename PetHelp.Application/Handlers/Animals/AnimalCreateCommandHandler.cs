@@ -1,0 +1,25 @@
+﻿using MediatR;
+using PetHelp.Application.Commands.Animals;
+using PetHelp.Domain.Entities;
+using PetHelp.Domain.Interfaces.Repositories;
+using PetHelp.Domain.Interfaces.Services;
+
+namespace PetHelp.Application.Handlers.Animals;
+
+public class AnimalCreateCommandHandler : IRequestHandler<CreateAnimalCommand, Animal>
+{
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IAnimalRepository _animalRepository;
+    public AnimalCreateCommandHandler(IUnitOfWork unitOfWork, IAnimalRepository animalRepository)
+    {
+        _animalRepository = animalRepository;
+        _unitOfWork = unitOfWork;
+    }
+    public async Task<Animal> Handle(CreateAnimalCommand request, CancellationToken cancellationToken)
+    {
+        var animal = new Animal(request.Name, request.Species, request.Breed, request.Age, request.Description, request.ImageUrl, request.City, request.State, request.CreatedByUserId);
+        var result = await _animalRepository.AddAsync(animal, cancellationToken);
+        await _unitOfWork.CommitAsync();
+        return result;
+    }
+}
