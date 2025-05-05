@@ -19,6 +19,7 @@ public class AnimalsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "ONG")] 
     public async Task<IActionResult> CreateAnimal([FromBody] CreateAnimalDTO createAnimalDto)
     {
         if (!ModelState.IsValid)
@@ -69,5 +70,43 @@ public class AnimalsController : ControllerBase
         if (animal == null)
             return NotFound();
         return Ok(animal);
+    }
+    [HttpPut("{id}")]
+    [Authorize(Roles = "ONG")]
+    public async Task<IActionResult> UpdateAnimal(Guid id, [FromBody] UpdateAnimalDTO updateAnimalDto)
+    {
+        if (id != updateAnimalDto.Id)
+            return BadRequest("Animal ID mismatch");
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        try
+        {
+            var updatedAnimal = await _animalService.UpdateAnimalAsync(updateAnimalDto);
+            if (updatedAnimal == null)
+                return NotFound();
+            return Ok(updatedAnimal);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating animal");
+            return StatusCode(500, "An error occurred while updating the animal");
+        }
+    }
+    [HttpDelete("{id}")]
+    [Authorize(Roles = "ONG")]
+    public async Task<IActionResult> DeleteAnimal(Guid id)
+    {
+        try
+        {
+            var deleted = await _animalService.DeleteAnimalAsync(id);
+            if (!deleted)
+                return NotFound();
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting animal");
+            return StatusCode(500, "An error occurred while deleting the animal");
+        }
     }
 }

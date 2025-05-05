@@ -12,7 +12,7 @@ public interface IAnimalService
     Task<IEnumerable<AnimalDTO>> GetAllAnimalsAsync();
     Task<AnimalDTO> GetAnimalByIdAsync(Guid id);
     Task<CreateAnimalDTO> CreateAnimalAsync(CreateAnimalDTO CreateAnimalDto);
-    Task<AnimalDTO> UpdateAnimalAsync(AnimalDTO animalDto);
+    Task<UpdateAnimalDTO> UpdateAnimalAsync(UpdateAnimalDTO animalDto);
     Task<bool> DeleteAnimalAsync(Guid id);
     Task<IEnumerable<AnimalDTO>> GetAnimalsByUserIdAsync(int userId);
     Task<IEnumerable<AnimalDTO>> GetAnimalsByCityAndStateAsync(string city, string state);

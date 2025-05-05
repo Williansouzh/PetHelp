@@ -35,6 +35,7 @@ public class AuthenticateService : IAuthenticate
             Name = name,
             LastName = lastName,
             Phone = phone,
+            Role = role,
         };
 
         var result = await _userManager.CreateAsync(applicationUser, password);
@@ -88,7 +89,9 @@ public class AuthenticateService : IAuthenticate
         var applicationUser = new ApplicationUser
         {
             UserName = email,
-            Email = email
+            Email = email,
+            Name = email,
+            Role = role,
         };
 
         var result = await _userManager.CreateAsync(applicationUser, password);
