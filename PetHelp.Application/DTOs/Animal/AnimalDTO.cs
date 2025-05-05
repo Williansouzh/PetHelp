@@ -39,5 +39,5 @@ public class AnimalDTO
     [StringLength(2, MinimumLength = 2, ErrorMessage = "O estado deve ter exatamente 2 caracteres (ex: 'SP').")]
     public string State { get; set; }
     [Required(ErrorMessage = "O ID do usuário criador é obrigatório.")]
-    public int CreatedByUserId { get; set; }
+    public string CreatedByUserId { get; set; }
 }

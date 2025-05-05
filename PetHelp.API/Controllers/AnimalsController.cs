@@ -48,6 +48,20 @@ public class AnimalsController : ControllerBase
             return StatusCode(500, "An error occurred while creating the animal");
         }
     }
+    [HttpGet]
+    public async Task<IActionResult> GetAnimals()
+    {
+        try
+        {
+            var animals = await _animalService.GetAllAnimalsAsync();
+            return Ok(animals);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching animals");
+            return StatusCode(500, "An error occurred while retrieving animals");
+        }
+    }
     [HttpGet("{id}")]
     public async Task<IActionResult> GetAnimalById(Guid id)
     {

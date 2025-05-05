@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using PetHelp.Application.Commands.Animals;
 using PetHelp.Application.DTOs.Animal;
 using PetHelp.Application.Interfaces;
+using PetHelp.Application.Queries.Animals;
 
 namespace PetHelp.Application.Services;
 
@@ -42,12 +43,58 @@ public class AnimalService : IAnimalService
 
     public Task<IEnumerable<AnimalDTO>> GetAllAnimalsAsync()
     {
-        throw new NotImplementedException();
+        try
+        {
+            _logger.LogInformation("Fetching all animals");
+            var query = new GetAnimalsQuery();
+            var animals = _mediator.Send(query).Result;
+            if (animals == null || !animals.Any())
+            {
+                _logger.LogWarning("No animals found");
+                return Task.FromResult<IEnumerable<AnimalDTO>>(new List<AnimalDTO>());
+            }
+            var animalDtos = _mapper.Map<IEnumerable<AnimalDTO>>(animals);
+            _logger.LogDebug("Successfully mapped {Count} animals to DTOs", animalDtos.Count());
+            return Task.FromResult(animalDtos);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching all animals");
+            throw; // Or return a specific error DTO if you prefer
+        }
     }
 
-    public Task<AnimalDTO> GetAnimalByIdAsync(Guid id)
+    public async Task<AnimalDTO> GetAnimalByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            _logger.LogInformation("Fetching animal by ID: {AnimalId}", id);
+
+            if (id == Guid.Empty)
+            {
+                _logger.LogWarning("Attempted to fetch animal with empty GUID");
+                return null;
+            }
+
+            var query = new GetAnimalByIdQuery(id);
+            var animal = await _mediator.Send(query);
+
+            if (animal == null)
+            {
+                _logger.LogWarning("Animal not found with ID: {AnimalId}", id);
+                return null;
+            }
+
+            var animalDto = _mapper.Map<AnimalDTO>(animal);
+            _logger.LogDebug("Successfully mapped animal with ID: {AnimalId} to DTO", id);
+
+            return animalDto;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error processing request for animal ID: {AnimalId}", id);
+            throw; // Or return a specific error DTO if you prefer
+        }
     }
 
     public Task<IEnumerable<AnimalDTO>> GetAnimalsByAgeRangeAsync(int minAge, int maxAge)

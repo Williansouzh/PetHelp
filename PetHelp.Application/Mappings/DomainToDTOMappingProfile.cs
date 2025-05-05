@@ -9,12 +9,15 @@ using PetHelp.Domain.Entities;
 
 namespace PetHelp.Application.Mappings;
 
-public class DomainToDTOMapingProfile : Profile
+public class DomainToDTOMappingProfile : Profile
+
 {
-    public DomainToDTOMapingProfile()
+    public DomainToDTOMappingProfile()
     {
         CreateMap<Animal, CreateAnimalDTO>();
         CreateMap<Animal, UpdateAnimalDTO>();
         CreateMap<Animal, DeleteAnimalDTO>();
+        CreateMap<Animal, AnimalDTO>()
+           .ForMember(dest => dest.CreatedByUserId, opt => opt.MapFrom(src => Guid.Parse(src.CreatedByUserId)));
     }
 }

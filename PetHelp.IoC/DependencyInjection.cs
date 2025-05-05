@@ -46,7 +46,7 @@ public static class DependencyInjection
         //Register Unit Of Work 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-        services.AddAutoMapper(typeof(DTOToCommandMappingProfile).Assembly);
+        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         var myHandles = AppDomain.CurrentDomain.Load("PetHelp.Application");
         services.AddMediatR(myHandles);
         return services;
