@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using PetHelp.Domain.Account;
+using PetHelp.Infra.Data.Exceptions;
 
 namespace PetHelp.Infra.Data.Identity;
 
@@ -28,6 +29,13 @@ public class AuthenticateService : IAuthenticate
     }
     public async Task<bool> RegisterUser(string email, string password, string role, string name, string lastName, string phone)
     {
+        var roleExists = await _roleManager.RoleExistsAsync(role);
+        if (!roleExists)
+        {
+            _logger.LogError("A role '{Role}' não existe.", role);
+            throw new RoleNotFoundException(role);
+        }
+
         var applicationUser = new ApplicationUser
         {
             UserName = email,
@@ -49,15 +57,9 @@ public class AuthenticateService : IAuthenticate
         }
 
         var user = await _userManager.FindByEmailAsync(email);
-        var roleExists = await _roleManager.RoleExistsAsync(role);
-        if (!roleExists)
-        {
-            _logger.LogError("A role '{Role}' não existe.", role);
-            return false;
-        }
-
         var roleResult = await _userManager.AddToRoleAsync(user, role);
         return roleResult.Succeeded;
+
     }
     public async Task<AuthUser?> Authenticate(string email, string password)
     {

@@ -16,4 +16,8 @@
     <ProjectReference Include="..\PetHelp.Domain\PetHelp.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Exceptions\" />
+  </ItemGroup>
+
 </Project>

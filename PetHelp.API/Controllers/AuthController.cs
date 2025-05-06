@@ -33,36 +33,29 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<ActionResult<AuthResponse>> Register([FromBody] UserDTO userDto)
     {
-        try
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var result = await _authentication.RegisterUser(
+            userDto.Email,
+            userDto.Password,
+            userDto.Role,
+            userDto.Name,
+            userDto.LastName,
+            userDto.Phone);
+
+        if (!result)
+            return Conflict(new { Message = "User already exists" });
+
+        _logger.LogInformation($"New user registered: {userDto.Email}");
+
+        return Ok(new AuthResponse
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var result = await _authentication.RegisterUser(
-                userDto.Email,
-                userDto.Password,
-                userDto.Role,
-                userDto.Name,
-                userDto.LastName,
-                userDto.Phone);
-
-            if (!result)
-                return Conflict(new { Message = "User already exists" });
-
-            _logger.LogInformation($"New user registered: {userDto.Email}");
-
-            return Ok(new AuthResponse
-            {
-                Message = "User created successfully",
-                Success = true
-            });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error during user registration");
-            return StatusCode(500, new { Message = "Internal server error" });
-        }
+            Message = "User created successfully",
+            Success = true
+        });
     }
+
     [HttpPost("login")]
     [EnableRateLimiting("login")]
     public async Task<ActionResult<AuthTokenResponse>> Login([FromBody] UserLoginDTO dto)
