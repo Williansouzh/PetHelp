@@ -75,15 +75,15 @@ public class AnimalsController : ControllerBase
     [Authorize(Roles = "ONG")]
     public async Task<IActionResult> UpdateAnimal(Guid id, [FromBody] UpdateAnimalDTO updateAnimalDto)
     {
-        if (id != updateAnimalDto.Id)
-            return BadRequest("Animal ID mismatch");
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
+
         try
         {
-            var updatedAnimal = await _animalService.UpdateAnimalAsync(updateAnimalDto);
+            var updatedAnimal = await _animalService.UpdateAnimalAsync(id, updateAnimalDto);
             if (updatedAnimal == null)
                 return NotFound();
+
             return Ok(updatedAnimal);
         }
         catch (Exception ex)
@@ -92,6 +92,7 @@ public class AnimalsController : ControllerBase
             return StatusCode(500, "An error occurred while updating the animal");
         }
     }
+
     [HttpDelete("{id}")]
     [Authorize(Roles = "ONG")]
     public async Task<IActionResult> DeleteAnimal(Guid id)
