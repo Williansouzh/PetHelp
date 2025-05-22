@@ -27,6 +27,9 @@ public  class SeedUserRoleInitial : ISeedUserRoleInitial
             var user = new ApplicationUser
             {
                 UserName = "adopt@localhost",
+                LastName = "",
+                Name="",
+                Phone = "98777654324",
                 Email = "adopt@localhost",
                 EmailConfirmed = true,
             };
@@ -42,6 +45,9 @@ public  class SeedUserRoleInitial : ISeedUserRoleInitial
             {
                 UserName = "ong@localhost",
                 Email = "ong@localhost",
+                Name = "Ong",
+                Phone = "98777654324",
+                LastName = "Lastname",
                 EmailConfirmed = true,
             };
             var resul = await _userManager.CreateAsync(user, "FB1mF@ln*");

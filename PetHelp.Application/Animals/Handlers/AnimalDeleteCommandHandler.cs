@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MediatR;
-using PetHelp.Application.Commands.Animals;
+using PetHelp.Application.Animals.Commands;
 using PetHelp.Domain.Entities;
 using PetHelp.Domain.Interfaces.Repositories;
 using PetHelp.Domain.Interfaces.Services;
 
-namespace PetHelp.Application.Handlers.Animals;
+namespace PetHelp.Application.Animals.Handlers;
 
 public class AnimalDeleteCommandHandler : IRequestHandler<DeleteAnimalCommand, Animal>
 {

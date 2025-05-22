@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using PetHelp.Application.Commands.Animals;
+using PetHelp.Application.Animals.Commands;
+using PetHelp.Application.Animals.Queries;
 using PetHelp.Application.DTOs.Animal;
-using PetHelp.Application.Handlers.Animals;
 using PetHelp.Application.Interfaces;
+using PetHelp.Application.Pagination;
 using PetHelp.Application.Queries.Animals;
 
 namespace PetHelp.Application.Services;
@@ -94,29 +90,29 @@ public class AnimalService : IAnimalService
             throw;
         }
     }
-    public async Task<IEnumerable<AnimalDTO>> GetAllAnimalsAsync()
+    public async Task<PaginationResponse<AnimalDTO>> GetAllAnimalsAsync(int pageNumber = 1, int pageSize = 10)
     {
         try
         {
-            _logger.LogInformation("Fetching all animals");
-            var query = new GetAnimalsQuery();
-            var animals = await _mediator.Send(query);
-            if (animals == null || !animals.Any())
+            _logger.LogInformation("Fetching animals: Page {PageNumber}, Size {PageSize}", pageNumber, pageSize);
+
+            var pagination = new PaginationRequest
             {
-                _logger.LogWarning("No animals found");
-                return new List<AnimalDTO>(); 
-            }
-            var animalDtos = _mapper.Map<IEnumerable<AnimalDTO>>(animals);
-            _logger.LogDebug("Successfully mapped {Count} animals to DTOs", animalDtos.Count());
-            return animalDtos; 
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+
+            var query = new GetAnimalsQuery(pagination);
+            return await _mediator.Send(query);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error fetching all animals");
-            throw; 
+            _logger.LogError(ex, "Error fetching animals");
+            throw;
         }
     }
-    
+
+
     public async Task<AnimalDTO> GetAnimalByIdAsync(Guid id)
     {
         try

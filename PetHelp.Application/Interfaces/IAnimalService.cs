@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PetHelp.Application.DTOs.Animal;
+﻿using PetHelp.Application.DTOs.Animal;
 
 namespace PetHelp.Application.Interfaces;
 
 public interface IAnimalService
 {
-    Task<IEnumerable<AnimalDTO>> GetAllAnimalsAsync();
+    Task<PaginationResponse<AnimalDTO>> GetAllAnimalsAsync(int pageNumber, int pageSize);
     Task<AnimalDTO> GetAnimalByIdAsync(Guid id);
     Task<CreateAnimalDTO> CreateAnimalAsync(CreateAnimalDTO CreateAnimalDto);
     Task<UpdateAnimalDTO> UpdateAnimalAsync(Guid id, UpdateAnimalDTO animalDto);

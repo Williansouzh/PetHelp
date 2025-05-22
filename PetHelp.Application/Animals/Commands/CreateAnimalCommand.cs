@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PetHelp.Application.Commands.Animals;
+namespace PetHelp.Application.Animals.Commands;
 
 public class CreateAnimalCommand : AnimalCommand
 {
