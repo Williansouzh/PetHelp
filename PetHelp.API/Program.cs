@@ -1,6 +1,7 @@
 using Microsoft.OpenApi.Models;
 using PetHelp.API.Middlewares.Filters;
 using PetHelp.API.Middlewares.Logging;
+using PetHelp.Domain.Account;
 using PetHelp.IoC;
 using System.Reflection;
 using System.Text.Json.Serialization;
@@ -16,6 +17,8 @@ builder.Services.AddControllers(options =>
 });
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddInfrastructureJWT(builder.Configuration);
+
+
 // Configure Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<ApiLoggingFilter>();
@@ -96,5 +99,19 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var seed = services.GetRequiredService<ISeedUserRoleInitial>();
+        await seed.SeedRolesAsync();
+        await seed.SeedUsersAsync();
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Ocorreu um erro ao semear roles e usuários iniciais");
+    }
+}
 app.Run();

@@ -1,6 +1,6 @@
 ﻿using PetHelp.Application.DTOs.Animal;
 using AutoMapper;
-using PetHelp.Application.Commands.Animals;
+using PetHelp.Application.Animals.Commands;
 namespace PetHelp.Application.Mappings;
 
 public class DTOToCommandMappingProfile : Profile

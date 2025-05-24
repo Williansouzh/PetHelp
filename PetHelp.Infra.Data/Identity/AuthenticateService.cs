@@ -27,7 +27,7 @@ public class AuthenticateService : IAuthenticate
         _logger = logger;
         _httpContextAccessor = httpContextAccessor;
     }
-    public async Task<bool> RegisterUser(string email, string password, string role, string name, string lastName, string phone)
+    public async Task<bool> RegisterUser(string email, string password,string role, string name, string lastName, string phone)
     {
         var roleExists = await _roleManager.RoleExistsAsync(role);
         if (!roleExists)
@@ -43,7 +43,6 @@ public class AuthenticateService : IAuthenticate
             Name = name,
             LastName = lastName,
             Phone = phone,
-            Role = role,
         };
 
         var result = await _userManager.CreateAsync(applicationUser, password);
@@ -86,30 +85,29 @@ public class AuthenticateService : IAuthenticate
         };
     }
 
-    public async Task<ApplicationUser?> RegisterUser(string email, string password, string role)
-    {
-        var applicationUser = new ApplicationUser
-        {
-            UserName = email,
-            Email = email,
-            Name = email,
-            Role = role,
-        };
+    //public async Task<ApplicationUser?> RegisterUser(string email, string password, string role)
+    //{
+    //    var applicationUser = new ApplicationUser
+    //    {
+    //        UserName = email,
+    //        Email = email,
+    //        Name = email,
+    //    };
 
-        var result = await _userManager.CreateAsync(applicationUser, password);
-        if (!result.Succeeded) return null;
+    //    var result = await _userManager.CreateAsync(applicationUser, password);
+    //    if (!result.Succeeded) return null;
 
-        var user = await _userManager.FindByEmailAsync(email);
-        if (user == null) return null;
+    //    var user = await _userManager.FindByEmailAsync(email);
+    //    if (user == null) return null;
 
-        if (!await _roleManager.RoleExistsAsync(role))
-        {
-            await _roleManager.CreateAsync(new IdentityRole(role));
-        }
+    //    if (!await _roleManager.RoleExistsAsync(role))
+    //    {
+    //        await _roleManager.CreateAsync(new IdentityRole(role));
+    //    }
 
-        var roleResult = await _userManager.AddToRoleAsync(user, role);
-        return roleResult.Succeeded ? user : null;
-    }
+    //    var roleResult = await _userManager.AddToRoleAsync(user, role);
+    //    return roleResult.Succeeded ? user : null;
+    //}
     public async Task Logout()
     {
         await _signInManager.SignOutAsync();

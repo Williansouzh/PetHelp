@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PetHelp.Domain.Interfaces.Repositories;
+﻿namespace PetHelp.Domain.Interfaces.Repositories;
 
 public  interface IRepository<T> where T : class
 {

@@ -4,6 +4,8 @@ namespace PetHelp.API.DTOs.UserDTOs;
 
 public class UserDTO
 {
+    [Required]
+    public string Role { get; set; }
     [Required(ErrorMessage = "Email is required")]
     [EmailAddress(ErrorMessage = "Invalid Email Address")]
     [StringLength(100, ErrorMessage = "Email length can't be more than 100.")]
@@ -13,9 +15,6 @@ public class UserDTO
     [StringLength(100, ErrorMessage = "Password length can't be more than 100.")]
     [DataType(DataType.Password)]
     public string Password { get; set; }
-
-    [Required(ErrorMessage = "Role is required")]
-    public string Role { get; set; }
 
     [StringLength(50, ErrorMessage = "Name can't be more than 50 characters.")]
     public string? Name { get; set; }

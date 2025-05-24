@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PetHelp.Application.Interfaces;
-using PetHelp.Application.Mappings;
 using PetHelp.Application.Services;
 using PetHelp.Domain.Account;
 using PetHelp.Domain.Interfaces.Repositories;

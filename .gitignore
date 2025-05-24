@@ -30,6 +30,7 @@ artifacts/
 
 # ASP.NET Scaffolding
 ScaffoldingReadMe.txt
+PetHelp.API/google-credentials.json.json
 
 # NuGet Packages
 *.nupkg

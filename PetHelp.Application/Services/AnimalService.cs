@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using PetHelp.Application.Commands.Animals;
+using PetHelp.Application.Animals.Commands;
+using PetHelp.Application.Animals.Queries;
 using PetHelp.Application.DTOs.Animal;
-using PetHelp.Application.Handlers.Animals;
 using PetHelp.Application.Interfaces;
+using PetHelp.Application.Pagination;
 using PetHelp.Application.Queries.Animals;
 
 namespace PetHelp.Application.Services;
@@ -36,79 +32,87 @@ public class AnimalService : IAnimalService
         _logger.LogInformation("Animal created with name: {Name}", createAnimalDTO.Name);
         return createAnimalDTO;
     }
-    public async Task<UpdateAnimalDTO> UpdateAnimalAsync(UpdateAnimalDTO updateAnimalDto)
+    public async Task<UpdateAnimalDTO> UpdateAnimalAsync(Guid id, UpdateAnimalDTO updateAnimalDto)
     {
         try
         {
-            _logger.LogInformation("Updating animal with ID: {AnimalId}", updateAnimalDto.Id);
+            _logger.LogInformation("Updating animal with ID: {AnimalId}", id);
             ValidateAnimalDTO(updateAnimalDto);
             var command = _mapper.Map<UpdateAnimalCommand>(updateAnimalDto);
+            command.Id = id;
             await _mediator.Send(command);
-            _logger.LogInformation("Animal updated with ID: {AnimalId}", updateAnimalDto.Id);
-            var animal = await GetAnimalByIdAsync(updateAnimalDto.Id);
+            _logger.LogInformation("Animal updated with ID: {AnimalId}", id);
+            var animal = await GetAnimalByIdAsync(id);
             if (animal == null)
             {
-                _logger.LogWarning("Animal not found with ID: {AnimalId}", updateAnimalDto.Id);
+                _logger.LogWarning("Animal not found with ID: {AnimalId}", id);
                 return null;
             }
             return updateAnimalDto;
         }
         catch
         {
-            _logger.LogError("Error updating animal with ID: {AnimalId}", updateAnimalDto.Id);
+            _logger.LogError("Error updating animal with ID: {AnimalId}", id);
             throw; 
         }
         ;
     }
-    public Task<bool> DeleteAnimalAsync(Guid id)
+    public async Task<bool> DeleteAnimalAsync(Guid id)
     {
         try
         {
             _logger.LogInformation("Deleting animal with ID: {AnimalId}", id);
+
             if (id == Guid.Empty)
             {
                 _logger.LogWarning("Attempted to delete animal with empty GUID");
-                return Task.FromResult(false);
+                return false;
             }
+
+            // Mapeando o ID para DeleteAnimalCommand usando AutoMapper
             var command = _mapper.Map<DeleteAnimalCommand>(id);
-            var result = _mediator.Send(command);
+
+            // Enviando o comando e aguardando a resposta
+            var result = await _mediator.Send(command);
+
             if (result == null)
             {
                 _logger.LogWarning("Animal not found with ID: {AnimalId}", id);
-                return Task.FromResult(false);
+                return false;
             }
+
             _logger.LogInformation("Animal deleted with ID: {AnimalId}", id);
-            return Task.FromResult(true);
-        }
-        catch
-        {
-            _logger.LogError("Error deleting animal with ID: {AnimalId}", id);
-            throw;
-        };
-    }
-    public async Task<IEnumerable<AnimalDTO>> GetAllAnimalsAsync()
-    {
-        try
-        {
-            _logger.LogInformation("Fetching all animals");
-            var query = new GetAnimalsQuery();
-            var animals = await _mediator.Send(query);
-            if (animals == null || !animals.Any())
-            {
-                _logger.LogWarning("No animals found");
-                return new List<AnimalDTO>(); 
-            }
-            var animalDtos = _mapper.Map<IEnumerable<AnimalDTO>>(animals);
-            _logger.LogDebug("Successfully mapped {Count} animals to DTOs", animalDtos.Count());
-            return animalDtos; 
+            return true;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error fetching all animals");
-            throw; 
+            _logger.LogError(ex, "Error deleting animal with ID: {AnimalId}", id);
+            throw;
         }
     }
-    
+    public async Task<PaginationResponse<AnimalDTO>> GetAllAnimalsAsync(int pageNumber = 1, int pageSize = 10)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching animals: Page {PageNumber}, Size {PageSize}", pageNumber, pageSize);
+
+            var pagination = new PaginationRequest
+            {
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+
+            var query = new GetAnimalsQuery(pagination);
+            return await _mediator.Send(query);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching animals");
+            throw;
+        }
+    }
+
+
     public async Task<AnimalDTO> GetAnimalByIdAsync(Guid id)
     {
         try

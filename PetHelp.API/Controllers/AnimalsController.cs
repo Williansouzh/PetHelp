@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PetHelp.Application.DTOs.Animal;
 using PetHelp.Application.Interfaces;
+using PetHelp.Application.Pagination;
 
 namespace PetHelp.API.Controllers;
 [Route("api/[controller]")]
@@ -50,11 +51,14 @@ public class AnimalsController : ControllerBase
         }
     }
     [HttpGet]
-    public async Task<IActionResult> GetAnimals()
+    public async Task<ActionResult<PaginationResponse<AnimalDTO>>> GetAnimals(
+    [FromQuery] int pageNumber = 1,
+    [FromQuery] int pageSize = 10)
     {
         try
         {
-            var animals = await _animalService.GetAllAnimalsAsync();
+            var pagination = new PaginationRequest { PageNumber = pageNumber, PageSize = pageSize };
+            var animals = await _animalService.GetAllAnimalsAsync(pagination.PageNumber, pagination.PageSize);
             return Ok(animals);
         }
         catch (Exception ex)
@@ -75,15 +79,15 @@ public class AnimalsController : ControllerBase
     [Authorize(Roles = "ONG")]
     public async Task<IActionResult> UpdateAnimal(Guid id, [FromBody] UpdateAnimalDTO updateAnimalDto)
     {
-        if (id != updateAnimalDto.Id)
-            return BadRequest("Animal ID mismatch");
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
+
         try
         {
-            var updatedAnimal = await _animalService.UpdateAnimalAsync(updateAnimalDto);
+            var updatedAnimal = await _animalService.UpdateAnimalAsync(id, updateAnimalDto);
             if (updatedAnimal == null)
                 return NotFound();
+
             return Ok(updatedAnimal);
         }
         catch (Exception ex)
@@ -92,6 +96,7 @@ public class AnimalsController : ControllerBase
             return StatusCode(500, "An error occurred while updating the animal");
         }
     }
+
     [HttpDelete("{id}")]
     [Authorize(Roles = "ONG")]
     public async Task<IActionResult> DeleteAnimal(Guid id)

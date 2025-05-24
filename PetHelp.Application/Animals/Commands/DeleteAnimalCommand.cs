@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using MediatR;
 using PetHelp.Domain.Entities;
 
-namespace PetHelp.Application.Commands.Animals;
+namespace PetHelp.Application.Animals.Commands;
 
 public class DeleteAnimalCommand : IRequest<Animal>
 {
