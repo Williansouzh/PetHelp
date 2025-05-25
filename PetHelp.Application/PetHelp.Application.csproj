@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <Folder Include="Exceptions\" />
+    <Folder Include="Adoptions\" />
   </ItemGroup>
 
 </Project>

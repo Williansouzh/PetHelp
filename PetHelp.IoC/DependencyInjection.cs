@@ -42,6 +42,8 @@ public static class DependencyInjection
         services.AddScoped<IAnimalService, AnimalService>();
         services.AddScoped<IReportRepository, ReportRepository>();
         services.AddScoped<IReportService, ReportService>();
+        services.AddScoped<IAdoptionRepository, AdoptionRepository>();
+        services.AddScoped<IAdoptionService, AdoptionService>();
         services.AddScoped<IAuthenticate, AuthenticateService>();
         services.AddScoped<ISeedUserRoleInitial, SeedUserRoleInitial>();
         services.AddScoped<ITokenService, TokenService>();
