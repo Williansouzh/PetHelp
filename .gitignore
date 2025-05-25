@@ -54,3 +54,4 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 /.vs
+/PetHelp.API/Credentials.json
