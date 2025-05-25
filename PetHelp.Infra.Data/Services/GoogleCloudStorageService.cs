@@ -1,4 +1,5 @@
-﻿using Google.Cloud.Storage.V1;
+﻿using Google.Apis.Auth.OAuth2;
+using Google.Cloud.Storage.V1;
 using Microsoft.Extensions.Configuration;
 using PetHelp.Domain.Interfaces.Services;
 
@@ -11,7 +12,9 @@ namespace PetHelp.Infra.Data.Services
 
         public GoogleCloudStorageService(IConfiguration config)
         {
-            _storageClient = StorageClient.Create();
+            var credentialPath = config["GoogleCloud:CredentialsPath"];
+            var credential = GoogleCredential.FromFile(credentialPath);
+            _storageClient = StorageClient.Create(credential);
             _bucketName = config["GoogleCloud:BucketName"];
         }
 

@@ -31,6 +31,12 @@ public static class DependencyInjection
         services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("ONG", policy => policy.RequireRole("ONG"));
+            options.AddPolicy("Adopter", policy => policy.RequireRole("Adopter"));
+        });
+
         //Register repositories 
         services.AddScoped<IAnimalRepository, AnimalRepository>();
         services.AddScoped<IAnimalService, AnimalService>();
@@ -41,7 +47,8 @@ public static class DependencyInjection
         services.AddScoped<ITokenService, TokenService>();
         //Register Unit Of Work 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
-
+        services.AddScoped<IGoogleCloudStorageService, GoogleCloudStorageService>();
+        services.AddScoped<IImageService, ImageService>();
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         var myHandles = AppDomain.CurrentDomain.Load("PetHelp.Application");
         services.AddMediatR(myHandles);

@@ -1,5 +1,6 @@
 ﻿using static PetHelp.Domain.Enum.ReportEnums;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace PetHelp.API.DTOs.ReportDTOs
 {
@@ -8,8 +9,7 @@ namespace PetHelp.API.DTOs.ReportDTOs
         [Required(ErrorMessage = "A descrição é obrigatória.")]
         [MinLength(10, ErrorMessage = "A descrição deve ter no mínimo 10 caracteres.")]
         public string Description { get; set; }
-
-        public string? ImageUrl { get; set; }
+        public IFormFile? Imagem { get; set; }
 
         [Required(ErrorMessage = "A latitude é obrigatória.")]
         [Range(-90, 90, ErrorMessage = "Latitude deve estar entre -90 e 90.")]
