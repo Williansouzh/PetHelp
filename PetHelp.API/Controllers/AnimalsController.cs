@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PetHelp.Application.DTOs.Animal;
@@ -13,10 +14,12 @@ public class AnimalsController : ControllerBase
 {
     private readonly IAnimalService _animalService;
     private readonly ILogger<AnimalsController> _logger;
-    public AnimalsController(IAnimalService animalService, ILogger<AnimalsController> logger)
+    private readonly IMapper _mapper;
+    public AnimalsController(IAnimalService animalService, ILogger<AnimalsController> logger, IMapper mapper)
     {
         _animalService = animalService;
         _logger = logger;
+        _mapper = mapper;
     }
 
     [HttpPost]

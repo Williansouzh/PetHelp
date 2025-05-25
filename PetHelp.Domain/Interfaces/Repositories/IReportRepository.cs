@@ -2,6 +2,6 @@
 
 namespace PetHelp.Domain.Interfaces.Repositories;
 
-public interface IAnimalRepository : IRepository<Animal>
+public interface IReportRepository : IRepository<Report>
 {
 }
