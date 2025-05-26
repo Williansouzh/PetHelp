@@ -5,6 +5,7 @@ using PetHelp.API.DTOs.ReportDTOs;
 using PetHelp.Application.DTOs.Animal;
 using PetHelp.Application.DTOs.Report;
 using PetHelp.Application.Interfaces;
+using PetHelp.Application.Pagination;
 
 namespace PetHelp.API.Controllers;
 
@@ -51,11 +52,21 @@ public class ReportsController : ControllerBase
         return Ok(report);
     }
     [HttpGet]
-    [Authorize("ONG")]
-    public async Task<IActionResult> GetAllReports()
+    public async Task<ActionResult<PaginationResponse<AnimalDTO>>> GetAllReportsAsync(
+    [FromQuery] int pageNumber = 1,
+    [FromQuery] int pageSize = 10)
     {
-        var reports = await _reportService.GetAllReportsAsync();
-        return Ok(reports);
+        try
+        {
+            var pagination = new PaginationRequest { PageNumber = pageNumber, PageSize = pageSize };
+            var animals = await _reportService.GetAllReportsAsync(pagination.PageNumber, pagination.PageSize);
+            return Ok(animals);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching animals");
+            return StatusCode(500, "An error occurred while retrieving animals");
+        }
     }
     [HttpPut("{id}")]
     [Authorize("ONG")]

@@ -51,6 +51,7 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IGoogleCloudStorageService, GoogleCloudStorageService>();
         services.AddScoped<IImageService, ImageService>();
+        services.AddScoped<IDialogFlowService, DialogflowService>();
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         var myHandles = AppDomain.CurrentDomain.Load("PetHelp.Application");
         services.AddMediatR(myHandles);
