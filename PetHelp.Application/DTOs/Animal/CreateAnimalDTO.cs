@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace PetHelp.Application.DTOs.Animal;
 
@@ -12,7 +13,7 @@ public class CreateAnimalDTO
     [Required(ErrorMessage = "A espécie do animal é obrigatória.")]
     [StringLength(50, ErrorMessage = "A espécie deve ter no máximo 50 caracteres.")]
     public string Species { get; set; }
-
+    public IFormFile? Image { get; set; }
     [StringLength(100, ErrorMessage = "A raça deve ter no máximo 100 caracteres.")]
     public string? Breed { get; set; }
 
@@ -22,7 +23,6 @@ public class CreateAnimalDTO
     [StringLength(1000, ErrorMessage = "A descrição deve ter no máximo 1000 caracteres.")]
     public string? Description { get; set; }
 
-    [Url(ErrorMessage = "A URL da imagem deve ser válida.")]
     public string? ImageUrl { get; set; }
 
     [Required(ErrorMessage = "A cidade é obrigatória.")]

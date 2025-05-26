@@ -16,19 +16,34 @@ public class AnimalService : IAnimalService
     private readonly IMapper _mapper;
     private readonly IMediator _mediator;
     private readonly ILogger<AnimalService> _logger;
-    public AnimalService(IMapper mapper, IMediator mediator, ILogger<AnimalService> logger)
+    private readonly IImageService _imageService;
+    public AnimalService(IMapper mapper, IMediator mediator, ILogger<AnimalService> logger, IImageService imageService)
     {
         _mapper = mapper;
         _mediator = mediator;
         _logger = logger;
+        _imageService = imageService;
     }
 
     public async Task<CreateAnimalDTO> CreateAnimalAsync(CreateAnimalDTO createAnimalDTO)
     {
         _logger.LogInformation("Creating animal with name: {Name}", createAnimalDTO.Name);
         ValidateAnimalDTO(createAnimalDTO);
+
+        if (createAnimalDTO.Image != null && createAnimalDTO.Image.Length > 0)
+        {
+            using var stream = createAnimalDTO.Image.OpenReadStream();
+            var imageUrl = await _imageService.UploadImageAsync(stream, createAnimalDTO.Image.FileName, createAnimalDTO.Image.ContentType);
+            createAnimalDTO.ImageUrl = imageUrl; 
+        }
+        else
+        {
+            createAnimalDTO.ImageUrl = "https://your-bucket-url.com/default-animal.jpg";
+        }
+
         var command = _mapper.Map<CreateAnimalCommand>(createAnimalDTO);
         await _mediator.Send(command);
+
         _logger.LogInformation("Animal created with name: {Name}", createAnimalDTO.Name);
         return createAnimalDTO;
     }

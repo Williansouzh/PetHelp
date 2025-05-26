@@ -24,7 +24,7 @@ public class AnimalsController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "ONG")] 
-    public async Task<IActionResult> CreateAnimal([FromBody] CreateAnimalDTO createAnimalDto)
+    public async Task<IActionResult> CreateAnimal([FromForm] CreateAnimalDTO createAnimalDto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
