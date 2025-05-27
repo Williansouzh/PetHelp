@@ -1,8 +1,12 @@
-﻿using AutoMapper;
+﻿using System.ComponentModel.DataAnnotations;
+using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using PetHelp.Application.Adoptions.Commads;
+using PetHelp.Application.Adoptions.Queries;
 using PetHelp.Application.DTOs.Adoption;
 using PetHelp.Application.Interfaces;
+using PetHelp.Application.Pagination;
 
 namespace PetHelp.Application.Services;
 
@@ -18,20 +22,51 @@ public class AdoptionService : IAdoptionService
         _logger = logger;
     }
 
-    public Task<AdoptionDTO> CreateAdoptionAsync(AdoptionRequest createAdoptionDto)
+    public async Task<AdoptionDTO> CreateAdoptionAsync(AdoptionRequest createAdoptionDto, string userId)
     {
-        throw new NotImplementedException();
+        _logger.LogInformation("Creating adoption request for user: {FullName}", createAdoptionDto.FullName);
+        ValidateAdoptionDTO(createAdoptionDto);
+
+        var command = _mapper.Map<CreateAdoptionCommand>(createAdoptionDto);
+        command.UserId = userId;
+        var adoption = await _mediator.Send(command);
+        _logger.LogInformation(userId);
+        var adoptionDto = _mapper.Map<AdoptionDTO>(adoption);
+        return adoptionDto;
     }
 
-    public Task<bool> DeleteAdoptionAsync(Guid id)
+    public async Task<bool> DeleteAdoptionAsync(Guid id)
     {
-        throw new NotImplementedException();
+        _logger.LogInformation("Deleting adoption request with ID: {Id}", id);
+        var command = new DeleteAdoptionCommand(id);
+        var result = await _mediator.Send(command) != null; 
+        _logger.LogInformation("Deleted adoption request with ID: {Id}", id);
+        return result;
     }
 
-    public Task<AdoptionDTO> GetAdoptionByIdAsync(Guid id)
+    public async Task<AdoptionDTO> GetAdoptionByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            _logger.LogInformation("Retrieving adoption request with ID: {Id}", id);
+            var query = new GetAdoptionByIdQuery(id);
+            var adoption = await _mediator.Send(query);
+
+            if (adoption == null)
+            {
+                _logger.LogWarning("No adoption request found with ID: {Id}", id);
+                return null;
+            }
+
+            return _mapper.Map<AdoptionDTO>(adoption);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving adoption request with ID: {Id}", id);
+            throw;
+        }
     }
+
 
     public Task<IEnumerable<AdoptionDTO>> GetAdoptionsByAgeRangeAsync(int minAge, int maxAge)
     {
@@ -68,13 +103,52 @@ public class AdoptionService : IAdoptionService
         throw new NotImplementedException();
     }
 
-    public Task<PaginationResponse<AdoptionDTO>> GetAllAdoptionsAsync(int pageNumber, int pageSize)
+    public async Task<PaginationResponse<AdoptionDTO>> GetAllAdoptionsAsync(int pageNumber, int pageSize)
     {
-        throw new NotImplementedException();
+        _logger.LogInformation("Retrieving all adoptions with pagination: Page {PageNumber}, Size {PageSize}", pageNumber, pageSize);
+        var pagination = new PaginationRequest
+        {
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        };
+        var query = new GetAdoptionsQuery(pagination);
+        var reports = await _mediator.Send(query);
+        return _mapper.Map<PaginationResponse<AdoptionDTO>>(reports);
     }
 
-    public Task<AdoptionDTO> UpdateAdoptionAsync(Guid id, AdoptionRequest updateAdoptionDto)
+    public async Task<AdoptionDTO> UpdateAdoptionAsync(Guid id, AdoptionRequest updateAdoptionDto)
     {
-        throw new NotImplementedException();
+        _logger.LogInformation("Updating adoption request with ID: {Id}", id);
+        ValidateAdoptionDTO(updateAdoptionDto);
+
+        var command = _mapper.Map<UpdateAdoptionCommand>(updateAdoptionDto);
+        command.Id = id;
+
+        var updatedAdoption = await _mediator.Send(command);
+        if (updatedAdoption == null)
+        {
+            _logger.LogWarning("No adoption request found with ID: {Id} to update", id);
+            return null;
+        }
+
+        _logger.LogInformation("Updated adoption request with ID: {Id}", id);
+        return _mapper.Map<AdoptionDTO>(updatedAdoption);
+    }
+
+    private void ValidateAdoptionDTO(object adoptionDto)
+    {
+
+        var validationResults = new List<ValidationResult>();
+        var validationContext = new ValidationContext(adoptionDto, serviceProvider: null, items: null);
+        bool isValid = Validator.TryValidateObject(adoptionDto, validationContext, validationResults, true);
+        if (!isValid)
+        {
+            var errors = validationResults.Select(vr => new ValidationResult(vr.ErrorMessage));
+            foreach (var error in errors)
+            {
+                _logger.LogError(error.ErrorMessage);
+            }
+            throw new ValidationException("AdoptionDTO is not valid");
+        }
     }
 }

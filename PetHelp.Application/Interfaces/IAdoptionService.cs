@@ -6,7 +6,7 @@ public interface IAdoptionService
 {
     Task<PaginationResponse<AdoptionDTO>> GetAllAdoptionsAsync(int pageNumber, int pageSize);
     Task<AdoptionDTO> GetAdoptionByIdAsync(Guid id);
-    Task<AdoptionDTO> CreateAdoptionAsync(AdoptionRequest createAdoptionDto);
+    Task<AdoptionDTO> CreateAdoptionAsync(AdoptionRequest createAdoptionDto, string userId);
     Task<AdoptionDTO> UpdateAdoptionAsync(Guid id, AdoptionRequest updateAdoptionDto);
     Task<bool> DeleteAdoptionAsync(Guid id);
     Task<IEnumerable<AdoptionDTO>> GetAdoptionsByUserIdAsync(int userId);

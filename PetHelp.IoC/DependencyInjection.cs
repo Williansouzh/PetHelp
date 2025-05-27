@@ -38,6 +38,8 @@ public static class DependencyInjection
         });
 
         //Register repositories 
+        services.AddScoped<IAdoptionRepository, AdoptionRepository>();
+        services.AddScoped<IAdoptionService, AdoptionService>();
         services.AddScoped<IAnimalRepository, AnimalRepository>();
         services.AddScoped<IAnimalService, AnimalService>();
         services.AddScoped<IReportRepository, ReportRepository>();

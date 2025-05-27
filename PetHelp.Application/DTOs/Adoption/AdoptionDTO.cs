@@ -2,7 +2,6 @@
 
 public class AdoptionDTO
 {
-    public Guid AnimalId { get; private set; }
     public string UserId { get; private set; }
 
     public string FullName { get; private set; }
