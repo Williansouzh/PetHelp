@@ -6,8 +6,8 @@ public interface IAnimalService
 {
     Task<PaginationResponse<AnimalDTO>> GetAllAnimalsAsync(int pageNumber, int pageSize);
     Task<AnimalDTO> GetAnimalByIdAsync(Guid id);
-    Task<CreateAnimalDTO> CreateAnimalAsync(CreateAnimalDTO CreateAnimalDto);
-    Task<UpdateAnimalDTO> UpdateAnimalAsync(Guid id, UpdateAnimalDTO animalDto);
+    Task<AnimalRequest> CreateAnimalAsync(AnimalRequest CreateAnimalDto);
+    Task<AnimalRequest> UpdateAnimalAsync(Guid id, AnimalRequest animalDto);
     Task<bool> DeleteAnimalAsync(Guid id);
     Task<IEnumerable<AnimalDTO>> GetAnimalsByUserIdAsync(int userId);
     Task<IEnumerable<AnimalDTO>> GetAnimalsByCityAndStateAsync(string city, string state);

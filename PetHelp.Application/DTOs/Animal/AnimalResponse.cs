@@ -1,9 +1,10 @@
-﻿using MediatR;
-using PetHelp.Domain.Entities;
-using static PetHelp.Domain.Enum.AnimalEnums;
-namespace PetHelp.Application.Animals.Commands;
-public abstract class AnimalCommand : IRequest<Animal>
+﻿using static PetHelp.Domain.Enum.AnimalEnums;
+
+namespace PetHelp.Application.DTOs.Animal;
+
+public class AnimalResponse
 {
+    public Guid Id { get; set; }
     public string Name { get; set; }
     public string Species { get; set; }
     public string Breed { get; set; }
@@ -20,4 +21,5 @@ public abstract class AnimalCommand : IRequest<Animal>
     public string City { get; set; }
     public string State { get; set; }
     public string CreatedByUserId { get; set; }
+    public DateTime CreatedAt { get; set; }
 }

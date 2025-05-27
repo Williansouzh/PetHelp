@@ -23,7 +23,7 @@ public class AnimalUpdateCommandHandler : IRequestHandler<UpdateAnimalCommand, A
 
         if (request.Name != null) animal.Name = request.Name;
         if (request.Description != null) animal.Description = request.Description;
-        if (request.Age.HasValue) animal.Age = request.Age.Value;
+        if (request.Age.HasValue) animal.BirthDate = DateTime.UtcNow.AddYears(-request.Age.Value);
         if (request.Breed != null) animal.Breed = request.Breed;
 
         await _animalRepository.UpdateAsync(animal);

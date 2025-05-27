@@ -25,7 +25,7 @@ public class AnimalService : IAnimalService
         _imageService = imageService;
     }
 
-    public async Task<CreateAnimalDTO> CreateAnimalAsync(CreateAnimalDTO createAnimalDTO)
+    public async Task<AnimalRequest> CreateAnimalAsync(AnimalRequest createAnimalDTO)
     {
         _logger.LogInformation("Creating animal with name: {Name}", createAnimalDTO.Name);
         ValidateAnimalDTO(createAnimalDTO);
@@ -47,7 +47,7 @@ public class AnimalService : IAnimalService
         _logger.LogInformation("Animal created with name: {Name}", createAnimalDTO.Name);
         return createAnimalDTO;
     }
-    public async Task<UpdateAnimalDTO> UpdateAnimalAsync(Guid id, UpdateAnimalDTO updateAnimalDto)
+    public async Task<AnimalRequest> UpdateAnimalAsync(Guid id, AnimalRequest updateAnimalDto)
     {
         try
         {

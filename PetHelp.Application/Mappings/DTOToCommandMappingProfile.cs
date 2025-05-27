@@ -11,9 +11,9 @@ public class DTOToCommandMappingProfile : Profile
 {
     public DTOToCommandMappingProfile()
     {
-        CreateMap<CreateAnimalDTO, CreateAnimalCommand>();
-        CreateMap<UpdateAnimalDTO, UpdateAnimalCommand>();
-        CreateMap<DeleteAnimalDTO, DeleteAnimalCommand>();
+        CreateMap<AnimalRequest, CreateAnimalCommand>();
+        CreateMap<AnimalRequest, UpdateAnimalCommand>();
+        CreateMap<AnimalRequest, DeleteAnimalCommand>();
 
         CreateMap<CreateReportDTO, CreateReportCommand>();
         CreateMap<UpdateReportDTO, UpdateReportCommand>();

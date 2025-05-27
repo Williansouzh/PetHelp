@@ -3,7 +3,7 @@ using static PetHelp.Domain.Enum.ReportEnums;
 
 namespace PetHelp.Domain.Entities;
 
-public class Report
+public class Report : Entity
 {
     public Guid Id { get; private set; }
 

@@ -24,14 +24,13 @@ public class AnimalsController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "ONG")] 
-    public async Task<IActionResult> CreateAnimal([FromForm] CreateAnimalDTO createAnimalDto)
+    public async Task<IActionResult> CreateAnimal([FromForm] AnimalRequest createAnimalDto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
         try
         {
-            // Look for user ID in multiple possible claims
             var userIdClaim = User.FindFirst("id") ??
                              User.FindFirst(ClaimTypes.NameIdentifier);
 
@@ -42,7 +41,7 @@ public class AnimalsController : ControllerBase
                 return Unauthorized("User not properly authenticated.");
             }
 
-            createAnimalDto.CreatedByUserId = userId.ToString(); // Store as string if your DB uses GUID
+            createAnimalDto.CreatedByUserId = userId.ToString(); 
 
             var createdAnimal = await _animalService.CreateAnimalAsync(createAnimalDto);
             return CreatedAtAction(nameof(GetAnimalById), new { id = createdAnimal.Id }, createdAnimal);
@@ -80,7 +79,7 @@ public class AnimalsController : ControllerBase
     }
     [HttpPut("{id}")]
     [Authorize(Roles = "ONG")]
-    public async Task<IActionResult> UpdateAnimal(Guid id, [FromBody] UpdateAnimalDTO updateAnimalDto)
+    public async Task<IActionResult> UpdateAnimal(Guid id, [FromBody] AnimalRequest updateAnimalDto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
