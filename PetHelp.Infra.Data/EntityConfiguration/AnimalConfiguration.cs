@@ -24,7 +24,9 @@ public class AnimalConfiguration : IEntityTypeConfiguration<Animal>
         entity.Property(a => a.City).IsRequired().HasMaxLength(100);
         entity.Property(a => a.State).IsRequired().HasMaxLength(50);
         entity.Property(a => a.CreatedByUserId).IsRequired();
-
+        entity.Property(a => a.AnimalType)
+              .HasConversion<string>()
+              .IsRequired();
         entity.Property(a => a.Gender)
               .HasConversion<string>()
               .IsRequired();

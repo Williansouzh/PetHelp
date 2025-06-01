@@ -29,7 +29,14 @@ public class AuthController : ControllerBase
         _logger = logger;
         _userManager = userManager;
     }
-
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<ApplicationUser>> GetUserById(Guid id)
+    {
+        var user = await _userManager.FindByIdAsync(id.ToString());
+        if (user == null)
+            return NotFound(new { Message = "User not found" });
+        return Ok(user);
+    }
     [HttpPost("register")]
     public async Task<ActionResult<AuthResponse>> Register([FromBody] UserDTO userDto)
     {

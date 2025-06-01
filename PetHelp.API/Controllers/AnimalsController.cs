@@ -9,7 +9,6 @@ using PetHelp.Application.Pagination;
 namespace PetHelp.API.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
 public class AnimalsController : ControllerBase
 {
     private readonly IAnimalService _animalService;

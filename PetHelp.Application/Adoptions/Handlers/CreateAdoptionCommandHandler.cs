@@ -12,19 +12,26 @@ public class CreateAdoptionCommandHandler : IRequestHandler<CreateAdoptionComman
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IAdoptionRepository _adoptionRepository;
+    private readonly IAnimalRepository _animalRepository;
     private readonly IMapper _mapper;
-    public CreateAdoptionCommandHandler(IUnitOfWork unitOfWork, IAdoptionRepository adoptionRepository, IMapper mapper)
+    public CreateAdoptionCommandHandler(IUnitOfWork unitOfWork, IAdoptionRepository adoptionRepository, IMapper mapper, IAnimalRepository animalRepository)
     {
         _unitOfWork = unitOfWork;
         _adoptionRepository = adoptionRepository;
         _mapper = mapper;
+        _animalRepository = animalRepository;
     }
     public async Task<AdoptionDTO> Handle(CreateAdoptionCommand request, CancellationToken cancellationToken)
     {
+        var animal = await _animalRepository.GetByIdAsync(request.AnimalId);
+        if (animal == null)
+            throw new Exception("Animal not found");
+
         var adoption = new Adoption(
             request.AnimalId,
             request.UserId,
             request.FullName,
+            animal.Name,
             request.Email,
             request.Phone,
             request.Address,

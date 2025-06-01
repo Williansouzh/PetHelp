@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using PetHelp.Application.DTOs.Adoption;
 using PetHelp.Application.Interfaces;
+using PetHelp.Domain.Enum;
+using static PetHelp.Domain.Enum.AdoptionEnums;
 
 namespace PetHelp.API.Controllers;
 
@@ -52,6 +54,31 @@ public class AdoptionsController : ControllerBase
             return NotFound();
 
         return Ok(updated);
+    }
+    [HttpPatch("{id:guid}/status")]
+    public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] UpdateAdoptionStatusRequest request)
+    {
+        if (!Enum.IsDefined(typeof(AdoptionStatus), request.Status))
+            return BadRequest("Invalid status value.");
+
+        try
+        {
+            var updatedAdoption = await _adoptionService.UpdateStatusAsync(id, request.Status);
+
+            return updatedAdoption is null
+                ? NotFound()
+                : Ok(updatedAdoption);
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogWarning(ex, "Failed to update adoption status for ID: {AdoptionId}", id);
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error while updating adoption status for ID: {AdoptionId}", id);
+            return StatusCode(500, "An unexpected error occurred.");
+        }
     }
 
     [HttpDelete("{id:guid}")]

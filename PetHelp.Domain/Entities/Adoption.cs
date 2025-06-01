@@ -8,8 +8,9 @@ public class Adoption : Entity
 {
     public Guid AnimalId { get; private set; }
     public string UserId { get; private set; }
-
     public string FullName { get; private set; }
+
+    public string AnimalName { get; set; }
     public string Email { get; private set; }
     public string Phone { get; private set; }
     public string Address { get; private set; }
@@ -29,6 +30,7 @@ public class Adoption : Entity
         Guid animalId,
         string userId,
         string fullName,
+        string animalName,
         string email,
         string phone,
         string address,
@@ -46,6 +48,7 @@ public class Adoption : Entity
             animalId,
             userId,
             fullName,
+            animalName,
             email,
             phone,
             address,
@@ -64,6 +67,7 @@ public class Adoption : Entity
         Guid animalId,
         string userId,
         string fullName,
+        string animalName,
         string email,
         string phone,
         string address,
@@ -85,10 +89,12 @@ public class Adoption : Entity
         DomainExceptValidation.When(string.IsNullOrWhiteSpace(workSchedule), "Work schedule is required");
         DomainExceptValidation.When(string.IsNullOrWhiteSpace(reasonForAdoption), "Reason for adoption is required");
         DomainExceptValidation.When(!agreedToTerms, "You must agree to the adoption terms");
+        DomainExceptValidation.When(animalName.Length > 100, "Animal name must be less than 100 characters");
 
         AnimalId = animalId;
         UserId = userId;
         FullName = fullName;
+        AnimalName = animalName;
         Email = email;
         Phone = phone;
         Address = address;
@@ -103,4 +109,38 @@ public class Adoption : Entity
     public void Approve() => Status = AdoptionStatus.Approved;
 
     public void Reject() => Status = AdoptionStatus.Rejected;
+    public void UpdateStatus(AdoptionStatus status)
+    {
+        Status = status;
+        UpdatedAt = DateTime.UtcNow;
+    }
+    public void Update(
+        string fullName,
+        string animalName,
+        string email,
+        string phone,
+        string address,
+        bool hasOtherPets,
+        string housingType,
+        int numberOfResidents,
+        string workSchedule,
+        string reasonForAdoption,
+        bool agreedToTerms)
+    {
+        ValidateDomain(
+            AnimalId,
+            UserId,
+            fullName ?? FullName,
+            animalName ?? AnimalName,
+            email ?? Email,
+            phone ?? Phone,
+            address ?? Address,
+            hasOtherPets != default ? hasOtherPets : HasOtherPets,
+            housingType ?? HousingType,
+            numberOfResidents != default ? numberOfResidents : NumberOfResidents,
+            workSchedule ?? WorkSchedule,
+            reasonForAdoption ?? ReasonForAdoption,
+            agreedToTerms != default ? agreedToTerms : AgreedToTerms
+        );
+    }
 }

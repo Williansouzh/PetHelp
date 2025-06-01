@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using static PetHelp.Domain.Enum.AdoptionEnums;
 
 namespace PetHelp.Application.DTOs.Adoption;
 
@@ -10,7 +11,7 @@ public class AdoptionRequest
     [Required(ErrorMessage = "O nome completo é obrigatório.")]
     [StringLength(100, ErrorMessage = "O nome completo deve ter no máximo 100 caracteres.")]
     public string FullName { get; set; } = string.Empty;
-
+    public AdoptionStatus Status { get;  set; }
     [Required(ErrorMessage = "O email é obrigatório.")]
     [EmailAddress(ErrorMessage = "O email fornecido é inválido.")]
     public string Email { get; set; } = string.Empty;

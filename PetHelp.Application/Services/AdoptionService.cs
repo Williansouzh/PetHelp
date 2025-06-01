@@ -4,9 +4,12 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using PetHelp.Application.Adoptions.Commads;
 using PetHelp.Application.Adoptions.Queries;
+using PetHelp.Application.Animals.Commands;
 using PetHelp.Application.DTOs.Adoption;
 using PetHelp.Application.Interfaces;
 using PetHelp.Application.Pagination;
+using static PetHelp.Domain.Enum.AdoptionEnums;
+using static PetHelp.Domain.Enum.AnimalEnums;
 
 namespace PetHelp.Application.Services;
 
@@ -15,11 +18,13 @@ public class AdoptionService : IAdoptionService
     private readonly ILogger<AdoptionService> _logger;
     private readonly IMapper _mapper;
     private readonly IMediator _mediator;
-    public AdoptionService(ILogger<AdoptionService> logger, IMapper mapper, IMediator mediator)
+    private readonly IAnimalService _animalService;
+    public AdoptionService(ILogger<AdoptionService> logger, IMapper mapper, IMediator mediator, IAnimalService animalService)
     {
         _mapper = mapper;
         _mediator = mediator;
         _logger = logger;
+        _animalService = animalService;
     }
 
     public async Task<AdoptionDTO> CreateAdoptionAsync(AdoptionRequest createAdoptionDto, string userId)
@@ -134,6 +139,34 @@ public class AdoptionService : IAdoptionService
         _logger.LogInformation("Updated adoption request with ID: {Id}", id);
         return _mapper.Map<AdoptionDTO>(updatedAdoption);
     }
+
+    public async Task<AdoptionDTO?> UpdateStatusAsync(Guid id, AdoptionStatus status)
+    {
+        _logger.LogInformation("Updating status for adoption request with ID: {Id} to {Status}", id, status);
+
+        var command = new UpdateStatusCommand
+        {
+            AdoptionId = id,
+            Status = status
+        };
+
+        var adoptionDto = await _mediator.Send(command);
+
+        if (adoptionDto != null)
+        {
+            if (status == AdoptionStatus.Approved)
+            {
+                await _animalService.UpdateAnimalStatusAsync(adoptionDto.AnimalId, AnimalStatus.Adotado);
+            }
+            else if (status == AdoptionStatus.Rejected || status == AdoptionStatus.Rejected)
+            {
+                await _animalService.UpdateAnimalStatusAsync(adoptionDto.AnimalId, AnimalStatus.Disponivel);
+            }
+        }
+
+        return adoptionDto;
+    }
+
 
     private void ValidateAdoptionDTO(object adoptionDto)
     {

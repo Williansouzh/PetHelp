@@ -8,6 +8,7 @@ using PetHelp.Application.DTOs.Animal;
 using PetHelp.Application.Interfaces;
 using PetHelp.Application.Pagination;
 using PetHelp.Application.Queries.Animals;
+using PetHelp.Domain.Enum;
 
 namespace PetHelp.Application.Services;
 
@@ -38,7 +39,7 @@ public class AnimalService : IAnimalService
         }
         else
         {
-            createAnimalDTO.ImageUrl = "https://your-bucket-url.com/default-animal.jpg";
+            createAnimalDTO.ImageUrl = "https://storage.googleapis.com/pethelp-images/default-animal.jpg";
         }
 
         var command = _mapper.Map<CreateAnimalCommand>(createAnimalDTO);
@@ -196,7 +197,16 @@ public class AnimalService : IAnimalService
         throw new NotImplementedException();
     }
 
-    
+    public Task UpdateAnimalStatusAsync(Guid animalId, AnimalEnums.AnimalStatus newStatus)
+    {
+        _logger.LogInformation("Updating animal status for Animal ID: {AnimalId} to {NewStatus}", animalId, newStatus);
+        var command = new UpdateAnimalStatusCommand
+        {
+            AnimalId = animalId,
+            Status = newStatus
+        };
+        return _mediator.Send(command);
+    }
 
     private void ValidateAnimalDTO(object animalDto)
     {
@@ -214,4 +224,6 @@ public class AnimalService : IAnimalService
             throw new ValidationException("AnimalDTO is not valid");
         }
     }
+
+  
 }

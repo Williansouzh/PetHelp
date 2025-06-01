@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PetHelp.Infra.Data.Context;
@@ -11,9 +12,11 @@ using PetHelp.Infra.Data.Context;
 namespace PetHelp.Infra.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250601194213_AddAnimalTypeTable")]
+    partial class AddAnimalTypeTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -171,11 +174,6 @@ namespace PetHelp.Infra.Data.Migrations
                     b.Property<Guid>("AnimalId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("AnimalName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -244,9 +242,8 @@ namespace PetHelp.Infra.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("AnimalType")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("AnimalType")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("timestamp with time zone");

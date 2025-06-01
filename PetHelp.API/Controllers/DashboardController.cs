@@ -69,7 +69,7 @@ public class DashboardController : ControllerBase
                 Id = pet.Id,
                 Name = pet.Name,
                 Breed = pet.Breed,
-                Age = CalculateAge(pet.BirthDate),
+                Age = CalculateAge(pet.BirthDate) ?? 0,
                 Status = pet.Status.ToString().ToLower(),
                 ImageUrl = pet.ImageUrl,
                 CreatedAt = pet.CreatedAt
@@ -95,7 +95,7 @@ public class DashboardController : ControllerBase
             {
                 Id = r.Id,
                 UrgencyLevel = r.UrgencyLevel.ToString().ToLower(),
-                AnimalType = r.AnimalType.ToString().ToLower(),
+                AnimalType = r.AnimalType,
                 CreatedAt = r.CreatedAt
             });
 
@@ -123,7 +123,7 @@ public class DashboardController : ControllerBase
                 Id = pet.Id,
                 Name = pet.Name,
                 Breed = pet.Breed,
-                Age = CalculateAge(pet.BirthDate),
+                Age = CalculateAge(pet.BirthDate) ?? 0,
                 Status = pet.Status.ToString().ToLower(),
                 ImageUrl = pet.ImageUrl,
                 CreatedAt = pet.CreatedAt
@@ -175,17 +175,18 @@ public class DashboardController : ControllerBase
         return User.FindFirst("sub")?.Value ?? User.FindFirst("id")?.Value;
     }
 
-    private static string CalculateAge(DateTime? birthDate)
+    private static int? CalculateAge(DateTime? birthDate)
     {
-        if (!birthDate.HasValue) return "Unknown";
+        if (!birthDate.HasValue) return null;
 
         var today = DateTime.Today;
         var age = today.Year - birthDate.Value.Year;
 
         if (birthDate.Value.Date > today.AddYears(-age)) age--;
 
-        return age == 1 ? "1 year" : $"{age} years";
+        return age;
     }
+
 
     private async Task<IActionResult> HandleGet<T>(Func<Task<IEnumerable<T>>> operation, string context)
     {

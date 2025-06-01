@@ -22,5 +22,6 @@ public class DTOToCommandMappingProfile : Profile
         CreateMap<AdoptionRequest, CreateAdoptionCommand>();
         CreateMap<AdoptionRequest, UpdateAdoptionCommand>();
         CreateMap<AdoptionRequest, DeleteAdoptionCommand>();
+        CreateMap<AdoptionRequest, UpdateStatusCommand>();
     }
 }

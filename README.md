@@ -327,34 +327,32 @@ public class Adoption : Entity
 
 ---
 
-## 🛠️ Variáveis de ambiente
+## 🔧 Configuração de Ambiente
 
+### Variáveis Críticas
+
+| Variável                | Descrição                              | Exemplo                          |
+|-------------------------|----------------------------------------|----------------------------------|
+| `JWT__Secret`           | Chave para assinatura JWT              | `supersecretkey123!`             |
+| `GCP__BucketName`       | Nome do bucket para imagens            | `pethelp-prod-images`            |
+| `DB__ConnectionString`  | String de conexão PostgreSQL           | `Server=db;Database=pethelp...`  |
+| `Dialogflow__ProjectId` | ID do projeto no DialogFlow            | `pethelp-chatbot-123`            |
+
+### Implantação com Docker
+
+```bash
+# Buildar as imagens
+docker-compose build
+
+# Iniciar os serviços
+docker-compose up -d
+
+# Aplicar migrações
+docker exec pethelp-api dotnet ef database update
 ```
-{
-    "ConnectionStrings": {
-        "DefaultConnection": "Host=db;Port=5432;Database=pethelp_db;Username=pethelp_user;Password=secret123"
-    },
-    "Dialogflow": {
-        "ProjectId": "pethelp-storage-access-460701"
-    },
-    "GoogleCloud": {
-        "BucketName": "pethelp-images",
-        "CredentialsPath": "Credentials.json"
-    },
-    "Jwt": {
-        "Key": "ThisIsASecretKeyForJwtTokenDontShare",
-        "Issuer": "YourApp",
-        "Audience": "YourAppUsers"
-    },
-    "Logging": {
-        "LogLevel": {
-            "Default": "Information",
-            "Microsoft.AspNetCore": "Warning"
-        }
-    },
-    "AllowedHosts": "*"
-}
+## 🔗 Links Úteis
 
-```
+- [Documentação OpenAPI](https://api.pethelp.com/swagger)
 
+---
 ---

@@ -1,5 +1,6 @@
 ﻿using PetHelp.Domain.Validation;
 using static PetHelp.Domain.Enum.AnimalEnums;
+using static PetHelp.Domain.Enum.ReportEnums;
 
 namespace PetHelp.Domain.Entities;
 
@@ -21,24 +22,25 @@ public class Animal : Entity
     public string City { get; set; }
     public string State { get; set; }
     public string CreatedByUserId { get; set; }
+    public AnimalType AnimalType { get; set; }
 
     public Animal() { }
 
     public Animal(string name, string species, string breed, DateTime birthDate, Gender gender, Size size,
         string description, bool isVaccinated, bool isNeutered, string adoptionRequirements, AnimalStatus status,
-        List<string> photoUrls, string imageUrl, string city, string state, string createdByUserId)
+        List<string> photoUrls, string imageUrl, string city, string state, string createdByUserId, AnimalType animalType)
     {
         Id = Guid.NewGuid();
         ValidateDomain(name, species, breed, birthDate, gender, size, description,
             isVaccinated, isNeutered, adoptionRequirements, status,
-            photoUrls, imageUrl, city, state, createdByUserId);
+            photoUrls, imageUrl, city, state, createdByUserId, animalType);
 
         CreatedByUserId = createdByUserId;
     }
 
     public void ValidateDomain(string name, string species, string breed, DateTime birthDate, Gender gender, Size size,
         string description, bool isVaccinated, bool isNeutered, string adoptionRequirements, AnimalStatus status,
-        List<string> photoUrls, string imageUrl, string city, string state, string createdByUserId)
+        List<string> photoUrls, string imageUrl, string city, string state, string createdByUserId, AnimalType animalType)
     {
         DomainExceptValidation.When(string.IsNullOrWhiteSpace(name), "Name is required");
         DomainExceptValidation.When(string.IsNullOrWhiteSpace(species), "Species is required");
@@ -50,6 +52,7 @@ public class Animal : Entity
         DomainExceptValidation.When(string.IsNullOrWhiteSpace(city), "City is required");
         DomainExceptValidation.When(string.IsNullOrWhiteSpace(state), "State is required");
         DomainExceptValidation.When(string.IsNullOrWhiteSpace(createdByUserId), "CreatedByUserId is required");
+        DomainExceptValidation.When(animalType == AnimalType.Outro, "Animal type must be specified");
 
         Name = name;
         Species = species;
@@ -66,14 +69,23 @@ public class Animal : Entity
         ImageUrl = imageUrl;
         City = city;
         State = state;
-    }
+        AnimalType = animalType;
 
+    }
+    public void UpdateStatus(AnimalStatus status)
+    {
+        DomainExceptValidation.When(status == AnimalStatus.Disponivel && Status != AnimalStatus.Adotado,
+            "Only adopted animals can be set to available");
+        DomainExceptValidation.When(status == AnimalStatus.Adotado && Status != AnimalStatus.Disponivel,
+            "Only available animals can be set to adopted");
+        Status = status;
+    }
     public void Update(string name, string species, string breed, DateTime birthDate, Gender gender, Size size,
         string description, bool isVaccinated, bool isNeutered, string adoptionRequirements, AnimalStatus status,
-        List<string> photoUrls, string imageUrl, string city, string state)
+        List<string> photoUrls, string imageUrl, string city, string state, AnimalType animalType)
     {
         ValidateDomain(name, species, breed, birthDate, gender, size, description,
             isVaccinated, isNeutered, adoptionRequirements, status,
-            photoUrls, imageUrl, city, state, CreatedByUserId);
+            photoUrls, imageUrl, city, state, CreatedByUserId, AnimalType);
     }
 }

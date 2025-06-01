@@ -17,12 +17,14 @@ public class AdoptionConfiguration : IEntityTypeConfiguration<Adoption>
 
         builder.Property(a => a.UserId)
             .IsRequired()
-            .HasMaxLength(450); // Ajuste conforme o tamanho do seu UserId
+            .HasMaxLength(450); 
 
         builder.Property(a => a.FullName)
             .IsRequired()
             .HasMaxLength(100);
-
+        builder.Property(a => a.AnimalName)
+            .IsRequired()
+            .HasMaxLength(100); 
         builder.Property(a => a.Email)
             .IsRequired()
             .HasMaxLength(100);

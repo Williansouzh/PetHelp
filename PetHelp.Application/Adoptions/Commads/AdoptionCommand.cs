@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using PetHelp.Application.DTOs.Adoption;
+using static PetHelp.Domain.Enum.AdoptionEnums;
 
 namespace PetHelp.Application.Adoptions.Commads;
 
@@ -9,6 +10,7 @@ public class AdoptionCommand : IRequest<AdoptionDTO>
     public string UserId { get;  set; }
 
     public string FullName { get;  set; }
+    public string AnimalName { get; set; }
     public string Email { get;  set; }
     public string Phone { get;  set; }
     public string Address { get;  set; }
@@ -18,4 +20,5 @@ public class AdoptionCommand : IRequest<AdoptionDTO>
     public string WorkSchedule { get;  set; }
     public string ReasonForAdoption { get;  set; }
     public bool AgreedToTerms { get;  set; }
+    public AdoptionStatus? Status { get; set; }
 }
