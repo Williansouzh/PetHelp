@@ -1,4 +1,85 @@
-﻿
+﻿# 🐾 PetHelp – Adote com Amor
+
+**PetHelp** é uma plataforma web desenvolvida durante o **1° Hackathon da Unicesumar em parceria com o Google Cloud**, com o objetivo de facilitar a adoção responsável de animais e denúncias de maus-tratos com uso de geolocalização.
+
+Este repositório contém **informações gerais do projeto**. O código está dividido em dois repositórios separados:
+
+- 🔙 [Repositório Backend](https://github.com/Williansouzh/PetHelp)
+- 🔜 [Repositório Frontend](https://github.com/Williansouzh/PetHelp-FrontEnd)
+
+---
+
+## 🔗 Links Importantes
+
+- [Apresentação no Hackathon (Drive/Youtube)](URL)
+- [Deploy Frontend (em breve)](URL)
+- [Baixe e rode o projeto com apenas uma linha de código](https://drive.google.com/file/d/1wYh3MEQmkY6zJCC5fnj5Tet332Sselzc/view?usp=sharing)
+    - Baixe e rode o projeto com o comando: `chmod +x start.sh`
+
+
+---
+
+## 💡 Sobre o Projeto
+
+O PetHelp conecta ONGs, protetores independentes e adotantes responsáveis, oferecendo:
+
+- Canal para denúncias com geolocalização
+- Sistema de cadastro e adoção de animais
+- Integração com IA e Google Cloud
+- Experiência responsiva e acessível
+
+Inspirado pelos **Objetivos de Desenvolvimento Sustentável (ODS)** da ONU, o PetHelp promove impacto social, inovação e sustentabilidade.
+
+---
+
+## 👩‍💻 Equipe
+
+- **Willian Souza Alves** – Full Stack Developer  
+  Integração frontend/backend, boas práticas e Clean Code
+
+- **Louise Carnevali** – Full Stack Developer  
+  Interfaces acessíveis com Next.js, Tailwind e UX
+
+- **Thayane Cordeiro** – Frontend Developer  
+  Páginas dinâmicas e fluxos de adoção e denúncia
+
+---
+
+## 🧰 Tecnologias Utilizadas
+
+### Frontend
+- Next.js · TypeScript · Tailwind CSS  
+- react-hook-form · Axios
+
+### Backend
+- C# .NET · PostgreSQL · JWT  
+- Google Cloud Functions, Storage, Vision, Translation, Pub/Sub, Firebase Auth
+
+### Hospedagem
+- Google Cloud Platform
+
+---
+
+## 🌍 Sobre o Hackathon
+
+Projeto desenvolvido no **1º Hackathon Unicesumar + Google Cloud**, voltado a estudantes EaD da área de TI. O evento promoveu capacitação oficial, mentoria, certificação e conexão com o mercado.
+
+---
+
+## 🚀 Compromisso e Futuro
+
+Nosso propósito vai além do MVP. Queremos:
+
+- Levar o PetHelp para todo o Brasil
+- Formar parcerias com ONGs reais
+- Salvar mais vidas e promover a adoção responsável
+
+---
+
+**Junte-se à transformação.**  
+Por um mundo melhor para os animais e suas famílias 💙  
+
+
 ## 🐶 Visão Geral
 
 A API do PetHelp será responsável por gerenciar:
@@ -353,6 +434,8 @@ docker exec pethelp-api dotnet ef database update
 ## 🔗 Links Úteis
 
 - [Documentação OpenAPI](https://api.pethelp.com/swagger)
+- [Baixe e rode o projeto com apenas uma linha de código](https://drive.google.com/file/d/1wYh3MEQmkY6zJCC5fnj5Tet332Sselzc/view?usp=sharing)
+-rode o projeto com o comando: chmod +x start.sh
 
----
+```bash
 ---
