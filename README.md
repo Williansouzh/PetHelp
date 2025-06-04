@@ -11,8 +11,8 @@ Este repositório contém **informações gerais do projeto**. O código está d
 
 ## 🔗 Links Importantes
 
-- [Apresentação no Hackathon (Drive/Youtube)](URL)
-- [Deploy Frontend (em breve)](URL)
+- [Apresentação no Hackathon (Drive/Youtube)](https://youtu.be/iwfvS5NuRRo)
+- [Deploy Frontend (em breve)](https://pet-help-front-end.vercel.app/)
 - [Baixe e rode o projeto com apenas uma linha de código](https://drive.google.com/file/d/1wYh3MEQmkY6zJCC5fnj5Tet332Sselzc/view?usp=sharing)
     - Baixe e rode o projeto com o comando: `chmod +x start.sh`
 
