@@ -43,7 +43,9 @@ public class AnimalsController : ControllerBase
             createAnimalDto.CreatedByUserId = userId.ToString(); 
 
             var createdAnimal = await _animalService.CreateAnimalAsync(createAnimalDto);
-            return CreatedAtAction(nameof(GetAnimalById), new { id = createdAnimal.Id }, createdAnimal);
+            var url = Url.Action(nameof(GetAnimalById), "Animals", new { id = createdAnimal.Id });
+            _logger.LogInformation("Generated URL: {url}", url);
+            return CreatedAtAction(nameof(GetAnimalById), controllerName: "Animals", new { id = createdAnimal.Id }, createdAnimal);
         }
         catch (Exception ex)
         {
