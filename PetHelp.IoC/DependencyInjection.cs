@@ -10,6 +10,7 @@ using PetHelp.Domain.Interfaces.Repositories;
 using PetHelp.Domain.Interfaces.Services;
 using PetHelp.Infra.Data.Context;
 using PetHelp.Infra.Data.Identity;
+using PetHelp.Infra.Data.Migrations;
 using PetHelp.Infra.Data.Persistence;
 using PetHelp.Infra.Data.Repositories;
 using PetHelp.Infra.Data.Services;
@@ -50,6 +51,8 @@ public static class DependencyInjection
         services.AddScoped<ISeedUserRoleInitial, SeedUserRoleInitial>();
         services.AddScoped<ITokenService, TokenService>();
         //Register Unit Of Work 
+        services.AddScoped<IMigrationService, MigrationService>();
+
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IGoogleCloudStorageService, GoogleCloudStorageService>();
         services.AddScoped<IImageService, ImageService>();

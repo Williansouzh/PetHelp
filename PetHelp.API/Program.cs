@@ -2,6 +2,8 @@ using Microsoft.OpenApi.Models;
 using PetHelp.API.Middlewares.Filters;
 using PetHelp.API.Middlewares.Logging;
 using PetHelp.Domain.Account;
+using PetHelp.Infra.Data.Context;
+using PetHelp.Infra.Data.Migrations;
 using PetHelp.IoC;
 using System.Reflection;
 using System.Text.Json.Serialization;
@@ -104,6 +106,9 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
+        var migrationService = services.GetRequiredService<IMigrationService>();
+        await migrationService.MigrateAsync();
+
         var seed = services.GetRequiredService<ISeedUserRoleInitial>();
         await seed.SeedRolesAsync();
         await seed.SeedUsersAsync();
@@ -112,6 +117,7 @@ using (var scope = app.Services.CreateScope())
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
         logger.LogError(ex, "Ocorreu um erro ao semear roles e usuários iniciais");
+        logger.LogError(ex, "Ocorreu um erro ao aplicar migrations e semear dados");
     }
 }
 app.Run();
